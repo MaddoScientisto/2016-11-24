@@ -1,7 +1,7 @@
 // TicTacToe.cpp : definisce il punto di ingresso dell'applicazione console.
 //
 
-
+#include "TicTacToe2.h"
 #include <string>
 #include <io.h>
 #include <fcntl.h>
@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "MaddoLib.h"
-#include "TicTacToe.h"
+
 
 using namespace std;
 using namespace Maddo;
