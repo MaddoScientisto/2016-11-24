@@ -6,6 +6,7 @@
 #include <string>
 #include "MaddoLib.h"
 #include <time.h>
+#include <math.h>
 
 using namespace std;
 using namespace Maddo;
@@ -36,30 +37,59 @@ bool Grid[GRID_ROWS][GRID_COLUMNS];
 void FillGrid(bool grid[][GRID_COLUMNS]);
 void EmptyGrid(bool grid[][GRID_COLUMNS]);
 void PrintGrid(bool grid[][GRID_COLUMNS], bool reveal);
+bool IsSquareHit(int x, int y);
+bool CheckNear(int x, int y, int ray);
+
 // Funzioni
 
 void Esercizio()
 {
 	int x, y;
+	int turn = 1;
 	srand(static_cast<unsigned int>(time(0))); // Inizializzare il generatore di numeri casuali
 	EmptyGrid(Grid);
 	FillGrid(Grid);
-
+	
 	while (true)
 	{
-		PrintGrid(Grid, true);
+		MaddoLib::ClearScreen();
+		MaddoLib::OutputLine("Turno: " + to_string(turn));
+		
+		PrintGrid(Grid, false);
 
 		x = MaddoLib::InputInt("Inserire linea: ", "Valore non corretto", 0, 9);
 		y = MaddoLib::InputInt("Inserire colonna: ", "Valore non corretto", 0, 9);
 		if (Grid[x][y])
 		{
-			MaddoLib::OutputLine("Fuoco");
+			MaddoLib::OutputLine("Centro");
+			MaddoLib::ClearScreen();
+			MaddoLib::OutputLine("Completato in: " + to_string(turn) + " turni.");
+			PrintGrid(Grid, true);
+			MaddoLib::OutputLine("GAME OVER MAN... GAME OVER");
 			return;
 		}
 		//Todo: controllo di prossimità
 
-		MaddoLib::OutputLine("Acqua");
+		
+		if (CheckNear(x, y, 1))
+		{
+			MaddoLib::OutputLine("Fuoco");
+		}
+		else
+		{			
+			if (CheckNear(x, y, 3))
+			{
+				MaddoLib::OutputLine("Fuochino");
+			}
+			else
+			{
+				MaddoLib::OutputLine("Acqua");
+			}
+		}
 
+		
+		MaddoLib::Pause();
+		turn++;
 	}
 
 
@@ -86,7 +116,7 @@ void EmptyGrid(bool grid[][GRID_COLUMNS])
 
 void PrintGrid(bool grid[][GRID_COLUMNS], bool reveal)
 {
-	MaddoLib::ClearScreen();
+	
 	MaddoLib::OutputLine("  0 1 2 3 4 5 6 7 8 9");
 	for (int i = 0; i < GRID_ROWS; i++)
 	{
@@ -108,3 +138,33 @@ void PrintGrid(bool grid[][GRID_COLUMNS], bool reveal)
 		MaddoLib::OutputLine();
 	}
 }
+
+bool IsSquareHit(int x, int y)
+{
+	return (Grid[x][y] == true);
+}
+
+bool CheckNear(int x, int y, int ray) 
+{
+
+	int cx, cy;
+	bool isHit = false;
+	for (int dx = -abs(ray); dx <= abs(ray); dx++) {
+		for (int dy = -abs(ray); dy <= abs(ray); dy++)
+		{
+			cx = x + dx;
+			cy = y + dy;
+
+			if (cy < 0) cy = 0;
+			if (cx < 0) cx = 0;
+			if (cx > GRID_COLUMNS) cx = GRID_COLUMNS - 1;
+			if (cy > GRID_ROWS) cy = GRID_COLUMNS - 1;
+
+			if (!isHit) isHit = IsSquareHit(cx, cy);
+
+		}
+	}
+	return isHit;
+}
+
+
